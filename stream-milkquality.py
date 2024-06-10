@@ -36,12 +36,19 @@ if pH_input.strip() and Temprature_input.strip() and Taste_input.strip() and Odo
 
     # Code untuk prediksi
     # Membuat tombol untuk prediksi
-    if st.button('Test Prediksi Kualitas Susu'):
-        input_data = np.array([pH, Temprature, Taste, Odor, Colour, Lemak, Turbidity]).reshape(1, -1)
-        milkquality_prediction = dtree.predict(input_data)
-
-        # Menampilkan hasil prediksi
-if Prediksi_Susu[0] == 0:
+   if st.button("Prediksi Kualitas Susu SEKARANG"):
+    try:
+        # Scaling fitur input numerik
+        scaled_features = scaler.transform([[pH, Temperatur]])
+        
+        # Menggabungkan semua fitur menjadi satu array
+        features = np.array([scaled_features[0][0], scaled_features[0][1], Rasa, Bau, Lemak, Kekeruhan, Warna]).reshape(1, -1)
+        
+        # Membuat prediksi dengan Decision Tree
+        Prediksi_Susu = milkquality.predict(features)
+        
+        # Menginterpretasi hasil prediksi
+        if Prediksi_Susu[0] == 0:
             Prediksi_Susu = "high"
         elif Prediksi_Susu[0] == 1:
             Prediksi_Susu = "low"
@@ -49,5 +56,7 @@ if Prediksi_Susu[0] == 0:
             Prediksi_Susu = "medium"
         else:
             Prediksi_Susu = "tidak ditemukan jenis kualitas susu"
-else:
-    st.warning('Mohon lengkapi semua kolom input.')
+        
+        st.success(Prediksi_Susu)
+    except Exception as e:
+        st.error(f"Terjadi kesalahan selama prediksi: {e}")

@@ -3,16 +3,6 @@ import pickle
 import os
 import numpy as np
 
-# Debugging path file
-st.write("Direktori Saat Ini:", os.getcwd())
-st.write("File dalam Direktori:", os.listdir())
-
-# Periksa apakah scikit-learn terpasang
-try:
-    import sklearn
-except ModuleNotFoundError:
-    st.error("Modul 'scikit-learn' tidak ditemukan. Silakan pasang dengan perintah 'pip install scikit-learn'.")
-
 # Verifikasi dan memuat model
 milkquality_model_path = 'milkquality_model.pkl'
 scaler_model_path = 'Scaler.pkl'

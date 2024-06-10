@@ -58,6 +58,7 @@ if pH_input.strip() and Temprature_input.strip() and Taste_input.strip() and Odo
     # Code untuk prediksi
     # Membuat tombol untuk prediksi
    if st.button("Prediksi Kualitas Susu"):
+
     try:
         # Scaling fitur input numerik
         scaled_features = scaler.transform([[pH, Temperatur]])

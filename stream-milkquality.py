@@ -3,10 +3,15 @@ import numpy as np
 import streamlit as st
 import os
 
-
 # Debugging path file
 st.write("Direktori Saat Ini:", os.getcwd())
 st.write("File dalam Direktori:", os.listdir())
+
+# Periksa apakah scikit-learn terpasang
+try:
+    import sklearn
+except ModuleNotFoundError:
+    st.error("Modul 'scikit-learn' tidak ditemukan. Silakan pasang dengan perintah 'pip install scikit-learn'.")
 
 try:
     # Memuat model yang disimpan

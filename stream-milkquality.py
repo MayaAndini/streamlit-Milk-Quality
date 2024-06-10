@@ -2,6 +2,7 @@ import pickle
 import numpy as np
 import streamlit as st
 import os
+import sklearn  # pastikan sklearn terpasang
 
 # Debugging path file
 st.write("Direktori Saat Ini:", os.getcwd())
@@ -19,7 +20,7 @@ except Exception as e:
     st.error(f"Terjadi kesalahan: {e}")
 
 # Judul aplikasi web
-st.title("Prediksi Kualitas Susu dengan Decision Tree")
+st.title("Prediksi Kualitas Susu")
 
 # Bidang input untuk data pengguna
 col1, col2 = st.columns(2)
@@ -32,19 +33,19 @@ with col2:
     if Temperatur != '':
         Temperatur = float(Temperatur)  # Konversi ke float
 with col1:
-    Rasa = st.text_input("Taste")
+    Rasa = st.text_input("Taste (0=bad, 1=good)")
     if Rasa != '':
         Rasa = float(Rasa)  # Konversi ke float
 with col2:
-    Bau = st.text_input("Odor")
+    Bau = st.text_input("Odor (0=bad, 1=good)")
     if Bau != '':
         Bau = float(Bau)  # Konversi ke float
 with col1:
-    Lemak = st.text_input("Fat")
+    Lemak = st.text_input("Fat (0=bad, 1=good)")
     if Lemak != '':
         Lemak = float(Lemak)  # Konversi ke float
 with col2:
-    Kekeruhan = st.text_input("Turbidity")
+    Kekeruhan = st.text_input("Turbidity (0=bad, 1=good)")
     if Kekeruhan != '':
         Kekeruhan = float(Kekeruhan)  # Konversi ke float
 with col1:

@@ -2,6 +2,9 @@ import pickle
 import numpy as np
 import streamlit as st
 import os
+pip install scikit-learn
+import sklearn
+
 
 # Debugging path file
 st.write("Direktori Saat Ini:", os.getcwd())

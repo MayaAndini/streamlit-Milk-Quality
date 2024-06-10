@@ -1,20 +1,21 @@
-import pickle
-import numpy as np
 import streamlit as st
+import pickle
+import os
 
 # Verifikasi dan memuat model
 file_path = 'milkquality_model.sav'
 if os.path.exists(file_path):
     with open(file_path, 'rb') as file:
-        milkquality = pickle.load(open('milkquality_model.sav', 'rb'))
+        milkquality model = pickle.load(open('/path/to/your/file/milkquality_model.sav', 'rb'))
 else:
     st.error(f"File not found: {file_path}")
 
-# Title of the web app
-st.title("Prediksi Kualitas Susu dengan Decision Tree")
+# judul web
+st.title('Prediksi Milk Quality')
 
-# Input fields for user data
+# membagi Kolom
 col1, col2 = st.columns(2)
+
 with col1:
     pH = st.text_input("pH")
     if pH != '':
@@ -67,3 +68,8 @@ if st.button("Prediksi Kualitas Susu SEKARANG"):
         Prediksi_Susu = "tidak ditemukan jenis kualitas susu"
 
 st.success(Prediksi_Susu)
+        CustomerCredit_prediksi = 'Customer dengan History Kredit yang Baik'
+    else:
+        CustomerCredit_prediksi = 'Customer dengan History Kredit yang Buruk'
+        
+    st.success(CustomerCredit_prediksi)

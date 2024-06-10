@@ -9,20 +9,41 @@ dtree = joblib.load('milkquality_model.sav')
 # Membaca model scaler
 scaler = joblib.load('Scaler.sav')
 
-# Membaca Label Encoder
-le = joblib.load('le.sav')
 
 # Judul web
 st.title('Prediksi Kualitas Susu')
 
+Sex_input = st.selectbox(
+    "Pilih jenis kelamin:",
+    ('Laki-Laki', 'Perempuan')
+)
+gender_mapping = {'Laki-Laki': 1, 'Perempuan': 0}
+Sex_y = gender_mapping[Sex_input]
+
 # Menampilkan hasil prediksi
 pH_input = st.text_input('Input Nilai pH')
 Temprature_input = st.text_input('Input nilai Temprature ')
-Taste_input = st.text_input('Input Taste ')
-Odor_input = st.text_input('Input nilai Odor')
-Colour_input = st.text_input('Input nilai Colour')
-Lemak_input = st.text_input('Input nilai Lemak')
-Turbidity_input = st.text_input('Input nilai Turbidity')
+Taste_input = st.selectbox(
+    "Pilih jenis Taste:",
+    ('Bad', 'Good')
+)
+Odor_input = st.selectbox(
+    "Pilih jenis Odor:",
+    ('Bad', 'Good')
+)
+Colour_input = st.selectbox(
+    "Pilih jenis Colour:",
+    ('Alice Blue', 'Ghost White', 'Honeydew', 'Oldlace', 'Snow', 'White', 'Whitesmoke', 'Wildsand', 'grey')
+)
+Lemak_input = st.selectbox(
+    "Pilih jenis Lemak:",
+    ('Bad', 'Good')
+)
+Turbidity_input = st.selectbox(
+    "Pilih jenis Turbidity:",
+    ('Bad', 'Good')
+)
+
 
 # Validasi input
 if pH_input.strip() and Temprature_input.strip() and Taste_input.strip() and Odor_input.strip() and Colour_input.strip() and Lemak_input.strip() and Turbidity_input.strip():

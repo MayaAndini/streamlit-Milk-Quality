@@ -1,64 +1,67 @@
+import pickle
 import numpy as np
 import streamlit as st
-import joblib
-from sklearn.preprocessing import StandardScaler
 
-# Load your scaler and model
-scaler = joblib.load('path_to_your_scaler.pkl')  # Adjust the path as needed
-milkquality = joblib.load('path_to_your_model.pkl')  # Adjust the path as needed
+# Load saved model
+milkquality = pickle.load(open('milkquality_model.pkl', 'rb'))
+scaler = pickle.load(open('Scaler.pkl', 'rb'))
+# Assuming 'le' is a label encoder for categorical target variable if needed in predictions
+# le = pickle.load(open('le.pkl', 'rb')) 
 
-# Input fields
-pH_input = st.text_input("pH")
-Temperature_input = st.text_input("Temperature")
-Taste_input = st.text_input("Taste")
-Odor_input = st.text_input("Odor")
-Colour_input = st.text_input("Colour")
-Lemak_input = st.text_input("Lemak")
-Turbidity_input = st.text_input("Turbidity")
+# Title of the web app
+st.title("Prediksi Kualitas Susu dengan Decision Tree")
 
-# Validasi input
-if (
-    pH_input.strip()
-    and Temperature_input.strip()
-    and Taste_input.strip()
-    and Odor_input.strip()
-    and Colour_input.strip()
-    and Lemak_input.strip()
-    and Turbidity_input.strip()
-):
-    pH = float(pH_input)
-    Temperature = float(Temperature_input)
-    Taste = float(Taste_input)
-    Odor = float(Odor_input)
-    Colour = float(Colour_input)
-    Lemak = float(Lemak_input)
-    Turbidity = float(Turbidity_input)
+# Input fields for user data
+col1, col2 = st.columns(2)
+with col1:
+    pH = st.text_input("pH")
+    if pH != '':
+        pH = float(pH)  # Convert to float
+with col2:
+    Temprature = st.text_input("Temperature")
+    if Temprature != '':
+        Temprature = float(Temprature)  # Convert to float
+with col1:
+    Taste = st.text_input("Taste")
+    if Taste != '':
+        Taste = float(Taste)  # Convert to float
+with col2:
+    Odor = st.text_input("Odor")
+    if Odor != '':
+        Odor = float(Odor)  # Convert to float
+with col1:
+    Lemak = st.text_input("Fat")
+    if Lemak != '':
+        Lemak = float(Lemak)  # Convert to float
+with col2:
+    Turbidity = st.text_input("Turbidity")
+    if Turbidity != '':
+        Turbidity = float(Turbidity)  # Convert to float
+with col1:
+    Colour = st.text_input("Color")
+    if Colour != '':
+        Colour = float(Colour)  # Convert to float
 
-    # Code untuk prediksi
-    # Membuat tombol untuk prediksi
-    if st.button("Prediksi Kualitas Susu"):
-        try:
-            # Scaling fitur input numerik
-            scaled_features = scaler.transform([[pH, Temperature]])
-            
-            # Menggabungkan semua fitur menjadi satu array
-            features = np.array([
-                scaled_features[0][0], scaled_features[0][1], Taste, Odor, Lemak, Turbidity, Colour
-            ]).reshape(1, -1)
-            
-            # Membuat prediksi dengan Decision Tree
-            Prediksi_Susu = milkquality.predict(features)
-            
-            # Menginterpretasi hasil prediksi
-            if Prediksi_Susu[0] == 0:
-                Prediksi_Susu = "high"
-            elif Prediksi_Susu[0] == 1:
-                Prediksi_Susu = "low"
-            elif Prediksi_Susu[0] == 2:
-                Prediksi_Susu = "medium"
-            else:
-                Prediksi_Susu = "tidak ditemukan jenis kualitas susu"
-            
-            st.success(Prediksi_Susu)
-        except Exception as e:
-            st.error(f"Terjadi kesalahan selama prediksi: {e}")
+# Prediction code
+Prediksi_Susu = ''
+if st.button("Prediksi Kualitas Susu SEKARANG"):
+    # Scaling numerical input features
+    scaled_features = scaler.transform([[pH, Temprature]])
+    
+    # Combining all features into a single array
+    features = np.array([scaled_features[0][0], scaled_features[0][1], Taste, Odor, Lemak, Turbidity, Colour]).reshape(1, -1)
+    
+    # Making prediction with Decision Tree
+    Prediksi_Susu = milkquality.predict(features)
+    
+    # Interpreting the prediction result
+    if Prediksi_Susu[0] == 0:
+        Prediksi_Susu = "high"
+    elif Prediksi_Susu[0] == 1:
+        Prediksi_Susu = "low"
+    elif Prediksi_Susu[0] == 2:
+        Prediksi_Susu = "medium"
+    else:
+        Prediksi_Susu = "tidak ditemukan jenis kualitas susu"
+
+st.success(Prediksi_Susu)

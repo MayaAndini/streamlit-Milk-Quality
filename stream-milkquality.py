@@ -1,80 +1,86 @@
 import pickle
 import numpy as np
 import streamlit as st
+import os
 
-# Fungsi untuk memuat file dengan penanganan kesalahan
-def load_file(file_name):
-    try:
-        with open(file_name, 'rb') as file:
-            return pickle.load(file)
-    except FileNotFoundError:
-        st.error(f"File {file_name} tidak ditemukan. Pastikan file tersebut ada di direktori yang benar.")
-        st.stop()
-    except Exception as e:
-        st.error(f"Terjadi kesalahan saat memuat file {file_name}: {e}")
-        st.stop()
+# Debugging path file
+st.write("Direktori Saat Ini:", os.getcwd())
+st.write("File dalam Direktori:", os.listdir())
 
-# Muat model yang disimpan dan file lainnya yang diperlukan
-milkquality = load_file('milkquality_model.pkl')
-scaler = load_file('Scaler.pkl')
-le = load_file('le.pkl')
+# Periksa apakah scikit-learn terpasang
+try:
+    import sklearn
+except ModuleNotFoundError:
+    st.error("Modul 'scikit-learn' tidak ditemukan. Silakan pasang dengan perintah 'pip install scikit-learn'.")
 
-# Judul web
-st.title("Prediksi Kualitas Susu dengan Decision Tree")
+try:
+    # Memuat model yang disimpan
+    with open('milkquality_model.pkl', 'rb') as f:
+        milkquality = pickle.load(f)
+    with open('Scaler.pkl', 'rb') as f:
+        scaler = pickle.load(f)
+except FileNotFoundError as e:
+    st.error(f"File tidak ditemukan: {e}")
+except Exception as e:
+    st.error(f"Terjadi kesalahan: {e}")
 
-# Untuk input data
+# Judul aplikasi web
+st.title("Prediksi Kualitas Susu")
+
+# Bidang input untuk data pengguna
 col1, col2 = st.columns(2)
 with col1:
     pH = st.text_input("pH")
-    if pH:
+    if pH != '':
         pH = float(pH)  # Konversi ke float
 with col2:
-    Temprature = st.text_input("Temperatur")
-    if Temprature:
-        Temprature = float(Temprature)  # Konversi ke float
+    Temperatur = st.text_input("Temperature")
+    if Temperatur != '':
+        Temperatur = float(Temperatur)  # Konversi ke float
 with col1:
-    Taste = st.text_input("Rasa")
-    if Taste:
-        Taste = float(Taste)  # Konversi ke float
+    Rasa = st.text_input("Taste (0=bad, 1=good)")
+    if Rasa != '':
+        Rasa = float(Rasa)  # Konversi ke float
 with col2:
-    Odor = st.text_input("Bau")
-    if Odor:
-        Odor = float(Odor)  # Konversi ke float
+    Bau = st.text_input("Odor (0=bad, 1=good)")
+    if Bau != '':
+        Bau = float(Bau)  # Konversi ke float
 with col1:
-    Lemak = st.text_input("Lemak")
-    if Lemak:
+    Lemak = st.text_input("Fat (0=bad, 1=good)")
+    if Lemak != '':
         Lemak = float(Lemak)  # Konversi ke float
 with col2:
-    Turbidity = st.text_input("Kekeruhan")
-    if Turbidity:
-        Turbidity = float(Turbidity)  # Konversi ke float
+    Kekeruhan = st.text_input("Turbidity (0=bad, 1=good)")
+    if Kekeruhan != '':
+        Kekeruhan = float(Kekeruhan)  # Konversi ke float
 with col1:
-    Colour = st.text_input("Warna")
-    if Colour:
-        Colour = float(Colour)  # Konversi ke float
+    Warna = st.text_input("Color")
+    if Warna != '':
+        Warna = float(Warna)  # Konversi ke float
 
-# Kode untuk prediksi
+# Kode prediksi
 Prediksi_Susu = ''
 if st.button("Prediksi Kualitas Susu SEKARANG"):
     try:
-        # Pastikan semua input telah diisi
-        if '' in [pH, Temprature, Taste, Odor, Lemak, Turbidity, Colour]:
-            st.error("Mohon isi semua kolom.")
-        else:
-            # Transformasi input
-            fitur_terukur = scaler.transform([[pH, Temprature]])
-            fitur_terkode = le.transform([[Taste, Odor, Lemak, Turbidity, Colour]])
-            
-            # Gabungkan fitur yang sudah diukur dan dikodekan
-            fitur_gabungan = np.hstack((fitur_terukur, fitur_terkode))
-            
-            # Prediksi dengan Decision Tree
-            prediksi = milkquality.predict(fitur_gabungan)
-            
-            # Peta prediksi ke label kualitas
-            label_kualitas = {0: "high", 1: "low", 2: "medium"}
-            Prediksi_Susu = label_kualitas.get(prediksi[0], "tidak ditemukan jenis kualitas susu")
+        # Scaling fitur input numerik
+        scaled_features = scaler.transform([[pH, Temperatur]])
         
-            st.success(Prediksi_Susu)
-    except ValueError as e:
-        st.error(f"Input tidak valid: {e}")
+        # Menggabungkan semua fitur menjadi satu array
+        features = np.array([scaled_features[0][0], scaled_features[0][1], Rasa, Bau, Lemak, Kekeruhan, Warna]).reshape(1, -1)
+        
+        # Membuat prediksi dengan Decision Tree
+        Prediksi_Susu = milkquality.predict(features)
+        
+        # Menginterpretasi hasil prediksi
+        if Prediksi_Susu[0] == 0:
+            Prediksi_Susu = "high"
+        elif Prediksi_Susu[0] == 1:
+            Prediksi_Susu = "low"
+        elif Prediksi_Susu[0] == 2:
+            Prediksi_Susu = "medium"
+        else:
+            Prediksi_Susu = "tidak ditemukan jenis kualitas susu"
+        
+        st.success(Prediksi_Susu)
+    except Exception as e:
+        st.error(f"Terjadi kesalahan selama prediksi: {e}")

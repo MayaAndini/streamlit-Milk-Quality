@@ -1,7 +1,7 @@
-import pickle
-import numpy as np
 import streamlit as st
+import pickle
 import os
+import numpy as np
 
 # Debugging path file
 st.write("Direktori Saat Ini:", os.getcwd())
@@ -13,46 +13,53 @@ try:
 except ModuleNotFoundError:
     st.error("Modul 'scikit-learn' tidak ditemukan. Silakan pasang dengan perintah 'pip install scikit-learn'.")
 
-try:
-    # Memuat model yang disimpan
-    with open('milkquality_model.pkl', 'rb') as f:
+# Verifikasi dan memuat model
+milkquality_model_path = 'milkquality_model.pkl'
+scaler_model_path = 'Scaler.pkl'
+if os.path.exists(milkquality_model_path) and os.path.exists(scaler_model_path):
+    with open(milkquality_model_path, 'rb') as f:
         milkquality = pickle.load(f)
-    with open('Scaler.pkl', 'rb') as f:
+    with open(scaler_model_path, 'rb') as f:
         scaler = pickle.load(f)
-except FileNotFoundError as e:
-    st.error(f"File tidak ditemukan: {e}")
-except Exception as e:
-    st.error(f"Terjadi kesalahan: {e}")
+else:
+    st.error(f"File model tidak ditemukan: {milkquality_model_path} atau {scaler_model_path}")
 
 # Judul aplikasi web
 st.title("Prediksi Kualitas Susu")
 
-# Bidang input untuk data pengguna
+# Membagi kolom input
 col1, col2 = st.columns(2)
+
 with col1:
     pH = st.text_input("pH")
     if pH != '':
         pH = float(pH)  # Konversi ke float
+
 with col2:
     Temperatur = st.text_input("Temperature")
     if Temperatur != '':
         Temperatur = float(Temperatur)  # Konversi ke float
+
 with col1:
     Rasa = st.text_input("Taste (0=bad, 1=good)")
     if Rasa != '':
         Rasa = float(Rasa)  # Konversi ke float
+
 with col2:
     Bau = st.text_input("Odor (0=bad, 1=good)")
     if Bau != '':
         Bau = float(Bau)  # Konversi ke float
+
 with col1:
     Lemak = st.text_input("Fat (0=bad, 1=good)")
     if Lemak != '':
         Lemak = float(Lemak)  # Konversi ke float
+
 with col2:
     Kekeruhan = st.text_input("Turbidity (0=bad, 1=good)")
     if Kekeruhan != '':
         Kekeruhan = float(Kekeruhan)  # Konversi ke float
+
 with col1:
     Warna = st.text_input("Color")
     if Warna != '':
